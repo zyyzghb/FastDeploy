@@ -33,6 +33,7 @@ from fastdeploy.spec_decode import SpecMethod
 if TYPE_CHECKING:
     from fastdeploy.model_executor.forward_meta import ForwardMeta
 
+from fastdeploy import envs
 from fastdeploy.config import FDConfig
 from fastdeploy.model_executor.layers.attention.attention import Attention
 from fastdeploy.model_executor.layers.attention.base_attention_backend import (
@@ -135,7 +136,7 @@ class MetaxMLAAttentionBackend(AttentionBackend):
         self.pd_disaggregation_mode: str = fd_config.parallel_config.pd_disaggregation_mode
 
         self.start_layer_index: int = fd_config.model_config.start_layer_index
-        self.device_id: int = os.getenv("CUDA_VISIBLE_DEVICES", None)
+        self.device_id: int = envs.CUDA_VISIBLE_DEVICES
 
         self.rank, self.device_id = init_rank_and_device_id(fd_config)
 

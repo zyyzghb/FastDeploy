@@ -2340,25 +2340,21 @@ class EngineService:
             "PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION": "python",
             "FLAGS_use_append_attn": 1,
             "NCCL_ALGO": "Ring",
-            "FLAGS_max_partition_size": int(os.getenv("FLAGS_max_partition_size", 1024)),
+            "FLAGS_max_partition_size": envs.FLAGS_max_partition_size,
             "OMP_NUM_THREADS": 3,
         }
         # environment variables needed by Dy2St
         variables.update(
             {
-                "SOT_LOG_LEVEL": os.getenv("SOT_LOG_LEVEL", default="0"),
-                "SOT_UNSAFE_CACHE_FASTPATH": os.getenv("SOT_UNSAFE_CACHE_FASTPATH", default="1"),
-                "SOT_ENABLE_0_SIZE_FALLBACK": os.getenv("SOT_ENABLE_0_SIZE_FALLBACK", default="0"),
-                "SOT_SPECIALIZED_DIM_NUMBERS": os.getenv("SOT_SPECIALIZED_DIM_NUMBERS", default="no"),
-                "SOT_ENABLE_COMPILE_TIME_LIMIT": os.getenv("SOT_ENABLE_COMPILE_TIME_LIMIT", default="0"),
-                "FLAGS_specialize_device_in_dy2st": os.getenv("FLAGS_specialize_device_in_dy2st", default="1"),
-                "FLAGS_enable_async_fast_gc": os.getenv("FLAGS_enable_async_fast_gc", default="0"),
-                "FLAGS_pir_interpreter_record_stream_for_gc_cache": os.getenv(
-                    "FLAGS_pir_interpreter_record_stream_for_gc_cache", default="1"
-                ),
-                "FLAGS_parameters_persistent_mode_in_dy2st": os.getenv(
-                    "FLAGS_parameters_persistent_mode_in_dy2st", default="1"
-                ),
+                "SOT_LOG_LEVEL": envs.SOT_LOG_LEVEL,
+                "SOT_UNSAFE_CACHE_FASTPATH": envs.SOT_UNSAFE_CACHE_FASTPATH,
+                "SOT_ENABLE_0_SIZE_FALLBACK": envs.SOT_ENABLE_0_SIZE_FALLBACK,
+                "SOT_SPECIALIZED_DIM_NUMBERS": envs.SOT_SPECIALIZED_DIM_NUMBERS,
+                "SOT_ENABLE_COMPILE_TIME_LIMIT": envs.SOT_ENABLE_COMPILE_TIME_LIMIT,
+                "FLAGS_specialize_device_in_dy2st": envs.FLAGS_specialize_device_in_dy2st,
+                "FLAGS_enable_async_fast_gc": envs.FLAGS_enable_async_fast_gc,
+                "FLAGS_pir_interpreter_record_stream_for_gc_cache": envs.FLAGS_pir_interpreter_record_stream_for_gc_cache,
+                "FLAGS_parameters_persistent_mode_in_dy2st": envs.FLAGS_parameters_persistent_mode_in_dy2st,
             }
         )
 
@@ -2384,12 +2380,12 @@ class EngineService:
         start gpu worker service
 
         """
-        log_dir = os.getenv("FD_LOG_DIR", default="log")
+        log_dir = envs.FD_LOG_DIR
         command_prefix = self._setting_environ_variables()
         current_file_path = os.path.abspath(__file__)
         current_dir_path = os.path.split(current_file_path)[0]
         # TODO
-        uncache_worker_stdout = "" if os.getenv("UNCACHE_WORKER_STDOUT", "0") == "1" else "-u"
+        uncache_worker_stdout = "" if envs.UNCACHE_WORKER_STDOUT == "1" else "-u"
         pd_cmd = f"{command_prefix} {sys.executable} {uncache_worker_stdout} -m paddle.distributed.launch"
         pd_cmd = pd_cmd + f" --log_dir {log_dir}"
 

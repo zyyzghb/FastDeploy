@@ -213,7 +213,7 @@ async def lifespan(app: FastAPI):
         os.environ["INFERENCE_MSG_QUEUE_ID"] = engine_args.engine_worker_queue_port[engine_args.local_data_parallel_id]
     engine_client = EngineClient(
         pid=pid,
-        port=int(os.environ.get("INFERENCE_MSG_QUEUE_ID", "0")),
+        port=int(envs.INFERENCE_MSG_QUEUE_ID),
         fd_config=fd_config,
         workers=args.workers,
         max_logprobs=args.max_logprobs,

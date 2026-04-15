@@ -23,6 +23,8 @@ import sys
 import paddle
 import triton
 
+from fastdeploy import envs
+
 from .triton_utils import (
     SubstituteTemplate,
     build_package,
@@ -202,7 +204,7 @@ class KernelInterface:
             python_package_name = f"{op_name}_package"
             tp_rank = paddle.distributed.get_rank()
 
-            generated_dir = os.getenv("TRITON_KERNEL_CACHE_DIR", f"/tmp/triton_cache/rank{tp_rank}")
+            generated_dir = envs.TRITON_KERNEL_CACHE_DIR or f"/tmp/triton_cache/rank{tp_rank}"
             print("the kernel cache dir is:", generated_dir)
             generated_dir = f"{generated_dir}/{op_name}"
             os.makedirs(generated_dir, exist_ok=True)

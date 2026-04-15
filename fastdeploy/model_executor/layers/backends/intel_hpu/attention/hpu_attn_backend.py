@@ -27,6 +27,7 @@ import paddle
 if TYPE_CHECKING:
     from paddle._typing.dtype_like import _DTypeLiteral
 
+from fastdeploy import envs
 from fastdeploy.config import FDConfig
 from fastdeploy.model_executor.layers.attention.attention import Attention
 from fastdeploy.model_executor.layers.attention.base_attention_backend import (
@@ -234,7 +235,7 @@ class HPUAttentionBackend(AttentionBackend_HPU):
         self.num_layers = llm_config.model_config.num_hidden_layers
 
         # pd_disaggregation
-        self.use_pd_disaggregation = int(os.getenv("FLAGS_use_pd_disaggregation", 0))
+        self.use_pd_disaggregation = envs.FLAGS_use_pd_disaggregation
         self.start_layer_index = llm_config.model_config.start_layer_index
         if llm_config.quant_config:
             self.quant_method = llm_config.quant_config.get_quant_method(self)

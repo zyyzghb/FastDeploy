@@ -20,6 +20,7 @@ import uvicorn
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import JSONResponse, ORJSONResponse, Response, StreamingResponse
 
+from fastdeploy import envs
 from fastdeploy.router.utils import (
     InstanceInfo,
     InstanceRole,
@@ -182,7 +183,7 @@ class Router:
         mixed_server = await self.select_mixed()
 
         if request_data.get("stream", False):
-            if request_data.get("divided_stream", int(os.environ.get("DIVIDED_STREAM", "0")) == 1):
+            if request_data.get("divided_stream", int(envs.DIVIDED_STREAM) == 1):
                 return await self._divided_generate_stream(request_data, [mixed_server.url()], endpoint=endpoint_name)
             else:
                 return await self._generate_stream(request_data, [mixed_server.url()], endpoint=endpoint_name)

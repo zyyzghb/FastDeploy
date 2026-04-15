@@ -23,6 +23,7 @@ from paddle import nn
 from paddleformers.utils.log import logger
 
 import fastdeploy
+from fastdeploy import envs
 from fastdeploy.model_executor.layers.moe.ep import deep_ep
 from fastdeploy.model_executor.layers.quantization.fp8_utils import (
     deep_gemm,
@@ -418,7 +419,7 @@ class DeepGemmFusedMoeMethod(MoEMethodBase):
 
         # 4. Compute ffn
         if self.ep_prefill_runner.num_worst_tokens > 0:
-            token_split_factor = 2 if int(os.getenv("USE_TBO", "0")) == 1 else 1
+            token_split_factor = 2 if int(envs.USE_TBO) == 1 else 1
             max_tokens_per_rank = (
                 layer.fd_config.scheduler_config.max_num_batched_tokens
                 // layer.fd_config.parallel_config.tensor_parallel_size

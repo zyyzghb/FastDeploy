@@ -164,7 +164,7 @@ class AppendAttentionBackend(AttentionBackend):
         if self.head_wise_swa_ratio > 0.0:
             self.head_wise_full_hidden = int((1 - self.head_wise_swa_ratio) * self.num_heads * self.head_dim)
 
-        self.max_partition_size: int = int(os.getenv("FLAGS_max_partition_size", 1024))
+        self.max_partition_size: int = envs.FLAGS_max_partition_size
         self.encoder_block_shape_q: int = encoder_block_shape_q
         self.decoder_block_shape_q: int = decoder_block_shape_q
 

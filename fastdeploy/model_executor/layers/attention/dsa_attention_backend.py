@@ -28,6 +28,7 @@ from fastdeploy.platforms import current_platform
 if current_platform.is_cuda():
     paddle.enable_compat(scope={"flash_mla"})
 
+from fastdeploy import envs
 from fastdeploy.model_executor.layers.attention.ops import (
     get_block_shape_and_split_kv_block,
     init_kv_signal_per_query,
@@ -169,7 +170,7 @@ class DSAAttentionBackend(AttentionBackend):
         self.pd_disaggregation_mode: str = fd_config.parallel_config.pd_disaggregation_mode
 
         self.start_layer_index: int = fd_config.model_config.start_layer_index
-        self.device_id: int = os.getenv("CUDA_VISIBLE_DEVICES", None)
+        self.device_id: int = envs.CUDA_VISIBLE_DEVICES
 
         self.rank, self.device_id = init_rank_and_device_id(fd_config)
 

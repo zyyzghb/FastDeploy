@@ -269,6 +269,172 @@ environment_variables: dict[str, Callable[[], Any]] = {
     "FD_SiluAndMul_USE_PHI_SWIGLU": lambda: bool(int(os.getenv("FD_SiluAndMul_USE_PHI_SWIGLU", "0"))),
     # Whether to enable FP8 quantization with pow2scale.
     "FD_FP8_QUANT_WITH_POW2SCALE": lambda: bool(int(os.getenv("FD_FP8_QUANT_WITH_POW2SCALE", "0"))),
+
+    # ============================================================
+    # Model Download & Source
+    # ============================================================
+    # Model download source selector (huggingface, aistudio, etc.)
+    "DOWNLOAD_SOURCE": lambda: os.getenv("DOWNLOAD_SOURCE", "huggingface"),
+    # AIStudio download endpoint URL
+    "AISTUDIO_ENDPOINT": lambda: os.getenv("AISTUDIO_ENDPOINT", "http://git.aistudio.baidu.com"),
+
+    # ============================================================
+    # Device Selection
+    # ============================================================
+    # XPU (Kunlun) visible device IDs
+    "XPU_VISIBLE_DEVICES": lambda: os.getenv("XPU_VISIBLE_DEVICES", None),
+    # Habana HPU visible device IDs
+    "HPU_VISIBLE_DEVICES": lambda: os.getenv("HPU_VISIBLE_DEVICES", None),
+    # MetaX MACA visible device IDs
+    "MACA_VISIBLE_DEVICES": lambda: os.getenv("MACA_VISIBLE_DEVICES", None),
+    # MetaX custom device root directory
+    "CUSTOM_DEVICE_ROOT": lambda: os.getenv("CUSTOM_DEVICE_ROOT", None),
+
+    # ============================================================
+    # PaddlePaddle / SOT Flags
+    # ============================================================
+    # PaddlePaddle SOT log level
+    "SOT_LOG_LEVEL": lambda: os.getenv("SOT_LOG_LEVEL", "0"),
+    # SOT unsafe cache fast path
+    "SOT_UNSAFE_CACHE_FASTPATH": lambda: os.getenv("SOT_UNSAFE_CACHE_FASTPATH", "1"),
+    # SOT zero-size fallback behavior
+    "SOT_ENABLE_0_SIZE_FALLBACK": lambda: os.getenv("SOT_ENABLE_0_SIZE_FALLBACK", "0"),
+    # SOT specialized dimension numbers
+    "SOT_SPECIALIZED_DIM_NUMBERS": lambda: os.getenv("SOT_SPECIALIZED_DIM_NUMBERS", "no"),
+    # SOT compilation time limit
+    "SOT_ENABLE_COMPILE_TIME_LIMIT": lambda: os.getenv("SOT_ENABLE_COMPILE_TIME_LIMIT", "0"),
+    # Specialize device during dynamic-to-static conversion
+    "FLAGS_specialize_device_in_dy2st": lambda: os.getenv("FLAGS_specialize_device_in_dy2st", "1"),
+    # Enable async fast garbage collection
+    "FLAGS_enable_async_fast_gc": lambda: os.getenv("FLAGS_enable_async_fast_gc", "0"),
+    # PIR interpreter stream recording for GC cache
+    "FLAGS_pir_interpreter_record_stream_for_gc_cache": lambda: os.getenv(
+        "FLAGS_pir_interpreter_record_stream_for_gc_cache", "0"
+    ),
+    # Persistent parameter mode in dynamic-to-static conversion
+    "FLAGS_parameters_persistent_mode_in_dy2st": lambda: os.getenv("FLAGS_parameters_persistent_mode_in_dy2st", "1"),
+    # Maximum partition size for attention computation kernels
+    "FLAGS_max_partition_size": lambda: int(os.getenv("FLAGS_max_partition_size", "1024")),
+    # PaddlePaddle selected GPU index for current process
+    "FLAGS_selected_gpus": lambda: os.getenv("FLAGS_selected_gpus", "0"),
+    # Enable prefill-decode disaggregation mode
+    "FLAGS_use_pd_disaggregation": lambda: int(os.getenv("FLAGS_use_pd_disaggregation", "0")),
+    # Enable per-chunk prefill-decode disaggregation mode
+    "FLAGS_use_pd_disaggregation_per_chunk": lambda: int(os.getenv("FLAGS_use_pd_disaggregation_per_chunk", "0")),
+    # Architecture selection for weight-only INT8 linear layers
+    "FLAGS_weight_only_linear_arch": lambda: os.getenv("FLAGS_weight_only_linear_arch", None),
+    # Flash attention version selector (2 or 3)
+    "FLAGS_flash_attn_version": lambda: os.getenv("FLAGS_flash_attn_version", "2"),
+
+    # ============================================================
+    # Scheduling & Runtime
+    # ============================================================
+    # Maximum number of prefill batches during scheduling
+    "MAX_PREFILL_NUM": lambda: os.getenv("MAX_PREFILL_NUM", "3"),
+    # Controls divided streaming for responses in the router
+    "DIVIDED_STREAM": lambda: os.getenv("DIVIDED_STREAM", "0"),
+    # Controls whether worker subprocess stdout is unbuffered
+    "UNCACHE_WORKER_STDOUT": lambda: os.getenv("UNCACHE_WORKER_STDOUT", "0"),
+    # Maximum number of ZMQ dealer connections for engine communication
+    "FD_DEALER_CONNECTIONS": lambda: int(os.getenv("FD_DEALER_CONNECTIONS", "50")),
+    # Enable objgraph memory debugging for request processing
+    "FD_ENABLE_OBJGRAPH_DEBUG": lambda: os.getenv("FD_ENABLE_OBJGRAPH_DEBUG", None),
+    # Prefill node one-step stop signal in PD disaggregation
+    "PREFILL_NODE_ONE_STEP_STOP": lambda: os.getenv("PREFILL_NODE_ONE_STEP_STOP", "0"),
+    # ZMQ message queue port ID for engine-worker communication
+    "INFERENCE_MSG_QUEUE_ID": lambda: os.getenv("INFERENCE_MSG_QUEUE_ID", "0"),
+
+    # ============================================================
+    # Model Config Overrides
+    # ============================================================
+    # Model compression ratio, overridable via env var
+    "COMPRESSION_RATIO": lambda: os.getenv("COMPRESSION_RATIO", None),
+    # RoPE (Rotary Position Embedding) theta parameter
+    "ROPE_THETA": lambda: os.getenv("ROPE_THETA", None),
+
+    # ============================================================
+    # Speculative Decoding
+    # ============================================================
+    # Legacy: enable greedy (top-k) verify strategy for speculative decoding
+    "SPECULATE_VERIFY_USE_TOPK": lambda: os.getenv("SPECULATE_VERIFY_USE_TOPK", "0"),
+    # Legacy: enable target-match verify strategy for speculative decoding
+    "SPECULATE_VERIFY_USE_TARGET_SAMPLING": lambda: os.getenv("SPECULATE_VERIFY_USE_TARGET_SAMPLING", "0"),
+
+    # ============================================================
+    # TBO & Attention
+    # ============================================================
+    # Enable Two-Batch Overlap (TBO) optimization
+    "USE_TBO": lambda: os.getenv("USE_TBO", "0"),
+    # Enable Flash MLA (Multi-head Latent Attention) kernel
+    "USE_FLASH_MLA": lambda: os.getenv("USE_FLASH_MLA", "0"),
+
+    # ============================================================
+    # HPU (Habana) Hardware
+    # ============================================================
+    # Enable HPU bucket warmup to pre-compile graph shapes
+    "HPU_WARMUP_BUCKET": lambda: int(os.getenv("HPU_WARMUP_BUCKET", "0")),
+    # Maximum model sequence length for HPU warmup
+    "HPU_WARMUP_MODEL_LEN": lambda: int(os.getenv("HPU_WARMUP_MODEL_LEN", "4096")),
+    # HPU warmup: step size for prefill batch sizes
+    "BATCH_STEP_PREFILL": lambda: int(os.getenv("BATCH_STEP_PREFILL", "1")),
+    # HPU warmup: step size for decode batch sizes
+    "BATCH_STEP_DECODE": lambda: int(os.getenv("BATCH_STEP_DECODE", "4")),
+    # HPU warmup: step size for decode block numbers
+    "BLOCK_STEP_DECODE": lambda: int(os.getenv("BLOCK_STEP_DECODE", "16")),
+    # HPU warmup: step size for prefill context block sizes
+    "CONTEXT_BLOCK_STEP_PREFILL": lambda: int(os.getenv("CONTEXT_BLOCK_STEP_PREFILL", "1")),
+    # HPU warmup: step size for prefill sequence lengths
+    "SEQUENCE_STEP_PREFILL": lambda: int(os.getenv("SEQUENCE_STEP_PREFILL", "128")),
+    # Enable Habana profiler on HPU hardware
+    "HABANA_PROFILE": lambda: int(os.getenv("HABANA_PROFILE", "0")),
+    # Sync mode for HPU performance breakdown profiling
+    "HPU_PERF_BREAKDOWN_SYNC_MODE": lambda: int(os.getenv("HPU_PERF_BREAKDOWN_SYNC_MODE", "1")),
+    # Starting step number for HPU profiling
+    "PROFILE_START": lambda: int(os.getenv("PROFILE_START", "0")),
+    # Ending step number for HPU profiling
+    "PROFILE_END": lambda: int(os.getenv("PROFILE_END", "4")),
+
+    # ============================================================
+    # Other Hardware (Iluvatar / MetaX / GCU / XPU)
+    # ============================================================
+    # Iluvatar KV cache memory allocation in GB
+    "FD_ILUVATAR_KVCACHE_MEM": lambda: os.getenv("FD_ILUVATAR_KVCACHE_MEM", "3"),
+    # MetaX KV cache memory allocation
+    "FD_METAX_KVCACHE_MEM": lambda: os.getenv("FD_METAX_KVCACHE_MEM", None),
+    # Enable attention monitoring on GCU (Enflame) hardware
+    "FD_GCU_ATTN_MONITOR": lambda: bool(int(os.getenv("FD_GCU_ATTN_MONITOR", "0"))),
+    # Process group size for MoE quantization on GCU backend
+    "FD_MOE_QUANT_MULTI_PROCESS_GROUP_SIZE": lambda: int(os.getenv("FD_MOE_QUANT_MULTI_PROCESS_GROUP_SIZE", "8")),
+    # XPU fused MoE weight-only INT8 TGEMM kernel type selection
+    "XFT_MOE_FC_WINT8_TGEMM": lambda: os.getenv("XFT_MOE_FC_WINT8_TGEMM", ""),
+
+    # ============================================================
+    # Mooncake Distributed Transfer
+    # ============================================================
+    # Path to Mooncake configuration file
+    "MOONCAKE_CONFIG_PATH": lambda: os.getenv("MOONCAKE_CONFIG_PATH", None),
+    # Local hostname for Mooncake transfer engine
+    "MOONCAKE_LOCAL_HOSTNAME": lambda: os.getenv("MOONCAKE_LOCAL_HOSTNAME", None),
+    # Metadata server address for Mooncake transfer
+    "MOONCAKE_METADATA_SERVER": lambda: os.getenv("MOONCAKE_METADATA_SERVER", None),
+    # Global segment size for Mooncake transfer
+    "MOONCAKE_GLOBAL_SEGMENT_SIZE": lambda: os.getenv("MOONCAKE_GLOBAL_SEGMENT_SIZE", None),
+    # Local buffer size for Mooncake transfer
+    "MOONCAKE_LOCAL_BUFFER_SIZE": lambda: os.getenv("MOONCAKE_LOCAL_BUFFER_SIZE", None),
+    # Transport protocol for Mooncake transfer (e.g., rdma)
+    "MOONCAKE_PROTOCOL": lambda: os.getenv("MOONCAKE_PROTOCOL", "rdma"),
+    # RDMA device names for Mooncake transfer
+    "MOONCAKE_RDMA_DEVICES": lambda: os.getenv("MOONCAKE_RDMA_DEVICES", ""),
+    # Master server address for Mooncake transfer
+    "MOONCAKE_MASTER_SERVER_ADDR": lambda: os.getenv("MOONCAKE_MASTER_SERVER_ADDR", None),
+
+    # ============================================================
+    # Benchmark & Debug
+    # ============================================================
+    # Enable saving benchmark results in PyTorch format
+    "SAVE_TO_PYTORCH_BENCHMARK_FORMAT": lambda: os.getenv("SAVE_TO_PYTORCH_BENCHMARK_FORMAT", None),
+    # Directory for caching compiled Triton kernels
+    "TRITON_KERNEL_CACHE_DIR": lambda: os.getenv("TRITON_KERNEL_CACHE_DIR", None),
 }
 
 

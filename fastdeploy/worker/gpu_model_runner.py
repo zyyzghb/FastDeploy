@@ -1574,7 +1574,7 @@ class GPUModelRunner(ModelRunnerBase):
         res_buffer = allocate_launch_related_buffer(**buffer_kwargs)
         self.share_inputs.update(res_buffer)
 
-        if int(os.getenv("USE_TBO", "0")) == 1:
+        if envs.USE_TBO == 1:
             for j in range(2):
                 GLOBAL_ATTN_BUFFERS[j] = allocate_launch_related_buffer(**buffer_kwargs)
 

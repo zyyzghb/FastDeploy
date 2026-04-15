@@ -34,6 +34,7 @@ except Exception as e:
     logger.debug(f"flash_attention_v3_varlen not available: {e}")
     flash_attention_v3_varlen = None
 
+from fastdeploy import envs
 from fastdeploy.model_executor.layers.attention.ops import (
     get_block_shape_and_split_kv_block,
     init_kv_signal_per_query,
@@ -299,7 +300,7 @@ class MLAAttentionBackend(AttentionBackend):
         self.pd_disaggregation_mode: str = fd_config.parallel_config.pd_disaggregation_mode
 
         self.start_layer_index: int = fd_config.model_config.start_layer_index
-        self.device_id: int = os.getenv("CUDA_VISIBLE_DEVICES", None)
+        self.device_id: int = envs.CUDA_VISIBLE_DEVICES
 
         self.rank, self.device_id = init_rank_and_device_id(fd_config)
 
@@ -612,7 +613,7 @@ class MLAAttentionBackend(AttentionBackend):
                 speculate_decoder,
             )
 
-            if int(os.getenv("USE_FLASH_MLA", "0")) == 0:
+            if int(envs.USE_FLASH_MLA) == 0:
                 assert self.num_heads <= 64, "paddle mla attention support failed"
                 if self.heads_need_padding:
                     q = paddle.nn.functional.pad(

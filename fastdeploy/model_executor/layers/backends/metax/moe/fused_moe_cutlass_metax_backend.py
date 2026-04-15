@@ -21,6 +21,7 @@ import paddle
 from paddle import nn
 from paddle.nn.quant import weight_quantize
 
+from fastdeploy import envs
 from fastdeploy.model_executor.layers.moe.fused_moe_backend_base import (
     MoEMethodBase,
     UnquantizedFusedMoEMethod,
@@ -245,7 +246,7 @@ class MetaxCutlassWeightOnlyMoEMethod(MetaxCutlassMoEMethod):
             self.quant_config = quant_config
         self.moe_quant_type = self.quant_config.algo
         self.pack_num = 1
-        self.weight_only_linear_arch = os.getenv("FLAGS_weight_only_linear_arch")
+        self.weight_only_linear_arch = envs.FLAGS_weight_only_linear_arch
         if self.weight_only_linear_arch is not None:
             self.weight_only_linear_arch = int(self.weight_only_linear_arch)
 

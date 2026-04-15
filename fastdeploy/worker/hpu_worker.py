@@ -201,7 +201,7 @@ class HpuWorker(WorkerBase):
             paddle.distributed.barrier()
         # 1. Warm up model
         # NOTE(gongshaotian): may be not need warm_up at this place
-        if int(os.environ.get("HPU_WARMUP_BUCKET", 0)) == 1:
+        if envs.HPU_WARMUP_BUCKET == 1:
             logger.info("Warmup bucket is enabled, start warmup bucket")
             self.model_runner.is_warmuping = True
             self.model_runner.warm_up_bucket()

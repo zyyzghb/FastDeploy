@@ -24,6 +24,7 @@ import socket
 from typing import Any, Callable, Dict, List, Tuple
 from urllib.parse import urlparse
 
+from fastdeploy import envs
 from fastdeploy.utils import console_logger
 
 IDS_TYPE_FLAG = {"text": 0, "image": 1, "video": 2, "audio": 3}
@@ -39,9 +40,9 @@ _HUB_ENDPOINTS = {
 
 def _get_hub_endpoint():
     """Return (host, port, hub_name) for the active download hub."""
-    source = os.environ.get("DOWNLOAD_SOURCE", "huggingface")
+    source = envs.DOWNLOAD_SOURCE
     if source == "aistudio":
-        url = os.environ.get("AISTUDIO_ENDPOINT", "http://git.aistudio.baidu.com")
+        url = envs.AISTUDIO_ENDPOINT
         parsed = urlparse(url)
         host = parsed.hostname or "git.aistudio.baidu.com"
         port = parsed.port or (443 if parsed.scheme == "https" else 80)

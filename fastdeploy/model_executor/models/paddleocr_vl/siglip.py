@@ -23,6 +23,7 @@ import paddle.nn as nn
 import paddle.nn.functional as F
 from paddleformers.transformers.model_utils import PretrainedModel
 
+from fastdeploy import envs
 from fastdeploy.model_executor.utils import h2d_copy, slice_fn
 from fastdeploy.platforms import current_platform
 
@@ -50,7 +51,7 @@ class SiglipAttention(nn.Layer):
         self.out_proj.weight.weight_loader = self.out_proj_weight_loader
 
         enable_fa3 = False
-        flash_attn_version = int(os.environ.get("FLAGS_flash_attn_version", "2"))
+        flash_attn_version = int(envs.FLAGS_flash_attn_version)
         if flash_attn_version == 3:
             prop = paddle.device.cuda.get_device_properties()
             cc = prop.major * 10 + prop.minor

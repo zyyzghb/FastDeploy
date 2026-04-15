@@ -21,6 +21,7 @@ from typing import Callable
 import paddle
 from paddle import nn
 
+from fastdeploy import envs
 from fastdeploy.model_executor.utils import (
     TensorTracker,
     default_weight_loader,
@@ -94,7 +95,7 @@ class MoEMethodBase(QuantMethodBase):
         load_strategy = config.load_config.load_strategy
 
         if config.parallel_config.ep_prefill_use_worst_num_tokens:
-            token_split_factor = 2 if int(os.getenv("USE_TBO", "0")) == 1 else 1
+            token_split_factor = 2 if int(envs.USE_TBO) == 1 else 1
             prefill_num_worst_tokens = (
                 config.scheduler_config.max_num_batched_tokens
                 // config.parallel_config.tensor_parallel_size

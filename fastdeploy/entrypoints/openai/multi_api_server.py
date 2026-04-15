@@ -20,6 +20,7 @@ import subprocess
 import sys
 import time
 
+from fastdeploy import envs
 from fastdeploy.platforms import current_platform
 from fastdeploy.utils import find_free_ports, get_logger, is_port_available
 
@@ -162,15 +163,15 @@ def main():
 
     device_count = 0
     if current_platform.is_cuda():
-        if os.getenv("CUDA_VISIBLE_DEVICES") is None:
+        if envs.CUDA_VISIBLE_DEVICES is None:
             raise ValueError("Please manually set CUDA_VISIBLE_DEVICES when launching multi-api-server.")
-        device_count = len(os.getenv("CUDA_VISIBLE_DEVICES").split(","))
+        device_count = len(envs.CUDA_VISIBLE_DEVICES.split(","))
     elif current_platform.is_xpu():
-        if os.getenv("XPU_VISIBLE_DEVICES") is None:
+        if envs.XPU_VISIBLE_DEVICES is None:
             raise ValueError("Please manually set XPU_VISIBLE_DEVICES when launching multi-api-server.")
-        device_count = len(os.getenv("XPU_VISIBLE_DEVICES").split(","))
+        device_count = len(envs.XPU_VISIBLE_DEVICES.split(","))
     elif current_platform.is_iluvatar():
-        device_count = len(os.getenv("CUDA_VISIBLE_DEVICES", "0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15").split(","))
+        device_count = len(envs.CUDA_VISIBLE_DEVICES.split(",")) if envs.CUDA_VISIBLE_DEVICES else 16
 
     processes = start_servers(
         server_count=args.num_servers,

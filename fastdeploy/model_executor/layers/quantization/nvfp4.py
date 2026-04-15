@@ -734,7 +734,7 @@ class ModelOptNvFp4FusedMoE(MoEMethodBase):
         token_all_num = sum(recv_num_tokens_per_expert_list)
 
         if self.ep_prefill_runner.num_worst_tokens > 0:
-            use_tbo = os.getenv("USE_TBO", "0")
+            use_tbo = envs.USE_TBO
             token_split_factor = 2 if int(use_tbo) == 1 else 1
             max_tokens_per_rank = (
                 layer.fd_config.scheduler_config.max_num_batched_tokens

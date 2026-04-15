@@ -95,7 +95,7 @@ class MetaxWorker(WorkerBase):
             by adjusting the `gpu_memory_utilization` parameter.
         """
 
-        fd_kvache_mem = os.getenv("FD_METAX_KVCACHE_MEM")
+        fd_kvache_mem = envs.FD_METAX_KVCACHE_MEM
         if fd_kvache_mem is not None:
             return int(float(fd_kvache_mem) * 1024**3)
         else:
@@ -114,8 +114,8 @@ class MetaxWorker(WorkerBase):
             paddle_allocated_mem_before_run = paddle.device.max_memory_allocated(local_rank)  # not reserved
 
             device_id = int(self.device_ids[local_rank])
-            if os.getenv("MACA_VISIBLE_DEVICES") is not None:
-                device_id = int(os.getenv("MACA_VISIBLE_DEVICES").split(",")[device_id])
+            if envs.MACA_VISIBLE_DEVICES is not None:
+                device_id = int(envs.MACA_VISIBLE_DEVICES.split(",")[device_id])
 
             pymxsml.mxSmlInit()
             info = pymxsml.mxSmlGetMemoryInfo(device_id)

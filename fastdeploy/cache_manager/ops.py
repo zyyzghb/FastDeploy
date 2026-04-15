@@ -18,6 +18,7 @@ import os
 
 import paddle
 
+from fastdeploy import envs
 from fastdeploy.platforms import current_platform
 from fastdeploy.utils import llm_logger as logger
 
@@ -117,7 +118,7 @@ try:
         if current_platform.is_xpu():
             return "XPU_VISIBLE_DEVICES=0,1,2,3,4,5,6,7"
         elif current_platform.is_maca():
-            return f'MACA_VISIBLE_DEVICES={os.environ.get("MACA_VISIBLE_DEVICES", "0,1,2,3,4,5,6,7")}'
+            return f'MACA_VISIBLE_DEVICES={envs.MACA_VISIBLE_DEVICES or "0,1,2,3,4,5,6,7"}'
         else:
             return "CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7"
 

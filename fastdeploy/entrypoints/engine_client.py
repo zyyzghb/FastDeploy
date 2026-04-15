@@ -161,7 +161,7 @@ class EngineClient:
             create=False,
         )
         self.connection_manager = DealerConnectionManager(
-            pid, max_connections=int(os.getenv("FD_DEALER_CONNECTIONS", 50))
+            pid, max_connections=envs.FD_DEALER_CONNECTIONS
         )
         self.worker_pid = os.getpid()
         self.connection_initialized = False
@@ -307,7 +307,7 @@ class EngineClient:
             None
         """
         # objgraph 统计，通过环境变量控制是否启用
-        if os.getenv("FD_ENABLE_OBJGRAPH_DEBUG") == "1":
+        if envs.FD_ENABLE_OBJGRAPH_DEBUG == "1":
             if not _has_objgraph:
                 obj_logger.warning(
                     "FD_ENABLE_OBJGRAPH_DEBUG is enabled but objgraph is not installed. Run `pip install objgraph` to enable it."

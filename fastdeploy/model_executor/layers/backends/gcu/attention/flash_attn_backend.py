@@ -23,6 +23,7 @@ from typing import TYPE_CHECKING, List, Optional
 import numpy as np
 import paddle
 
+from fastdeploy import envs
 from fastdeploy.config import FDConfig
 from fastdeploy.model_executor.layers.attention.attention import Attention
 from fastdeploy.model_executor.layers.attention.base_attention_backend import (
@@ -104,7 +105,7 @@ class GCUFlashAttnBackend(AttentionBackend):
         self.all_slot_mapping: List[List[int]] = None
 
         self.rotary_embs = None
-        self.enable_monitor: bool = bool(os.getenv("FD_GCU_ATTN_MONITOR", False))
+        self.enable_monitor: bool = envs.FD_GCU_ATTN_MONITOR
 
     def init_attention_metadata(self, forward_meta: ForwardMeta):
         """Initialize attntion metadata hence all layers in the forward pass can reuse it."""

@@ -14,8 +14,7 @@
 # limitations under the License.
 """
 
-import os
-
+from fastdeploy import envs
 from fastdeploy.config import FDConfig
 from fastdeploy.platforms import current_platform
 
@@ -28,9 +27,9 @@ def init_rank_and_device_id(fd_config: FDConfig):
     )
 
     if current_platform.is_xpu():
-        cuda_visible_devices = os.getenv("XPU_VISIBLE_DEVICES", None)
+        cuda_visible_devices = envs.XPU_VISIBLE_DEVICES
     else:  # default cuda
-        cuda_visible_devices = os.getenv("CUDA_VISIBLE_DEVICES", None)
+        cuda_visible_devices = envs.CUDA_VISIBLE_DEVICES
 
     if cuda_visible_devices is None:
         device_id = rank

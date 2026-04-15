@@ -23,6 +23,7 @@ import paddle
 from paddle import nn
 from paddleformers.utils.log import logger
 
+from fastdeploy import envs
 from fastdeploy.model_executor.layers.moe.fused_moe_backend_base import (
     UnquantizedFusedMoEMethod,
 )
@@ -250,7 +251,7 @@ class GCUWeightOnlyMoEMethod(GCUFusedMoeMethod):
         ]
         self.group_size = 64
 
-        self.quant_multi_process_group_size = int(os.getenv("FD_MOE_QUANT_MULTI_PROCESS_GROUP_SIZE", 8))
+        self.quant_multi_process_group_size = envs.FD_MOE_QUANT_MULTI_PROCESS_GROUP_SIZE
         logger.info(f"GCUWeightOnlyMoEMethod quant_multi_process_group_size: {self.quant_multi_process_group_size}")
 
     def process_prequanted_weights(self, layer: nn.Layer, state_dict, is_rearrange: bool = False):

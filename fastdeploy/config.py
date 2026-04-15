@@ -691,8 +691,8 @@ class ParallelConfig:
             raise RuntimeError("shutdown_comm_group_if_worker_idle cannot be True when FD_ENABLE_V1_UPDATE_WEIGHTS=1")
 
         # pd_disaggregation
-        use_pd_disaggregation: int = int(os.getenv("FLAGS_use_pd_disaggregation", 0))
-        use_pd_disaggregation_per_chunk: int = int(os.getenv("FLAGS_use_pd_disaggregation_per_chunk", 0))
+        use_pd_disaggregation: int = envs.FLAGS_use_pd_disaggregation
+        use_pd_disaggregation_per_chunk: int = envs.FLAGS_use_pd_disaggregation_per_chunk
         if use_pd_disaggregation_per_chunk:
             self.pd_disaggregation_mode = "per_chunk"
         elif use_pd_disaggregation:
@@ -702,7 +702,7 @@ class ParallelConfig:
 
         # Prefill node one step stop (PD disaggregation specific)
         # When enabled, prefill node stops after one decoding step
-        self.prefill_one_step_stop: bool = os.getenv("PREFILL_NODE_ONE_STEP_STOP", "0") == "1"
+        self.prefill_one_step_stop: bool = envs.PREFILL_NODE_ONE_STEP_STOP == "1"
 
         # disable_sequence_parallel_moe: qkv_linear + attn + out_linear + allreduce
         # use_sequence_parallel_moe: allgather + qkv_linear + attn + all2all + out_linear
@@ -842,7 +842,7 @@ class SpeculativeConfig:
         Only applies if user hasn't explicitly set the corresponding config.
         """
         for env_var, (config_key, env_value) in self._ENV_OVERRIDES.items():
-            if os.environ.get(env_var, "0") == "1":
+            if getattr(envs, env_var, "0") == "1":
                 # Only apply if user didn't explicitly set this config
                 if user_args is None or config_key not in user_args:
                     setattr(self, config_key, env_value)
@@ -1977,7 +1977,7 @@ class FDConfig:
 
         # TODO
         if not envs.FD_ENABLE_MAX_PREFILL:
-            self.max_prefill_batch = int(os.getenv("MAX_PREFILL_NUM", "3"))
+            self.max_prefill_batch = int(envs.MAX_PREFILL_NUM)
             if (
                 int(envs.ENABLE_V1_KVCACHE_SCHEDULER) == 0
                 and self.model_config is not None
@@ -1998,11 +1998,11 @@ class FDConfig:
             self.worker_num_per_node = num_ranks
 
         self.parallel_config.device_ids = ",".join([str(i) for i in range(self.worker_num_per_node)])
-        self.parallel_config.device_ids = os.getenv("CUDA_VISIBLE_DEVICES", self.parallel_config.device_ids)
+        self.parallel_config.device_ids = envs.CUDA_VISIBLE_DEVICES or self.parallel_config.device_ids
         if current_platform.is_xpu():
-            self.parallel_config.device_ids = os.getenv("XPU_VISIBLE_DEVICES", self.parallel_config.device_ids)
+            self.parallel_config.device_ids = envs.XPU_VISIBLE_DEVICES or self.parallel_config.device_ids
         if current_platform.is_intel_hpu():
-            self.parallel_config.device_ids = os.getenv("HPU_VISIBLE_DEVICES", self.parallel_config.device_ids)
+            self.parallel_config.device_ids = envs.HPU_VISIBLE_DEVICES or self.parallel_config.device_ids
 
         if (
             self.load_config

@@ -20,6 +20,7 @@ from typing import List, Optional
 
 import paddle
 
+from fastdeploy import envs
 from fastdeploy.config import FDConfig
 from fastdeploy.model_executor.forward_meta import ForwardMeta, ForwardMode
 from fastdeploy.model_executor.layers.attention.base_attention_backend import (
@@ -118,7 +119,7 @@ class FlashAttentionBackend(AttentionBackend):
         self.total_hidden_dim = self.total_num_heads * self.head_dim
         self.dtype = paddle.get_default_dtype()
         self.num_layers: int = fd_config.model_config.num_hidden_layers
-        self.max_partition_size: int = int(os.getenv("FLAGS_max_partition_size", 32768))
+        self.max_partition_size: int = envs.FLAGS_max_partition_size
 
         self.pd_disaggregation_mode: str = fd_config.parallel_config.pd_disaggregation_mode
 

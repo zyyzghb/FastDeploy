@@ -22,6 +22,7 @@ from typing import TYPE_CHECKING, List, Optional
 
 import paddle
 
+from fastdeploy import envs
 from fastdeploy.config import FDConfig
 from fastdeploy.model_executor.layers.attention.attention import Attention
 from fastdeploy.model_executor.layers.attention.base_attention_backend import (
@@ -126,7 +127,7 @@ class FlashMaskAttentionBackend(AttentionBackend):
         self.rope_3d: bool = fd_config.enable_rope_3d_runtime
         if fd_config.speculative_config.model_type != "main":
             self.rope_3d = False
-        self.max_partition_size: int = int(os.getenv("FLAGS_max_partition_size", "32768"))
+        self.max_partition_size: int = envs.FLAGS_max_partition_size
         self.sm_version = get_sm_version()
 
     def get_kv_cache_shape(
@@ -204,7 +205,7 @@ class FlashMaskAttentionBackend(AttentionBackend):
                 metadata.kv_signal_metadata,
                 layer.layer_id + self.start_layer_index,
             )
-        if int(os.getenv("USE_TBO", "0")) == 1:
+        if int(envs.USE_TBO) == 1:
             if hasattr(forward_meta, "tbo_microbatch_id"):
                 # here we only let the last microbatch invoke cache kv transfer！
                 if forward_meta.tbo_microbatch_id == 0:

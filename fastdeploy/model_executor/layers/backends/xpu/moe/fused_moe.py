@@ -117,7 +117,7 @@ class XPUMoEMethod(MoEMethodBase):
 
         # TODO(zhupengyang): remove XFT_MOE_FC_WINT8_TGEMM later
         if self.moe_quant_type == "weight_only_int8":
-            xft_moe_fc_wint8_tgemm = os.environ.get("XFT_MOE_FC_WINT8_TGEMM", "")
+            xft_moe_fc_wint8_tgemm = envs.XFT_MOE_FC_WINT8_TGEMM
             if xft_moe_fc_wint8_tgemm == "FLOAT16":
                 self.xpu_moe_quant_type = "w_channelwise_int8_a_tokenwise_float16"
             elif xft_moe_fc_wint8_tgemm == "INT8":

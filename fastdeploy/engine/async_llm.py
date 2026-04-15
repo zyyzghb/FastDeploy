@@ -319,7 +319,7 @@ class AsyncLLM(EngineServiceClient):
 
             # Create high-performance async connection manager for receiving responses
             self.connection_manager = DealerConnectionManager(
-                pid=self.engine_pid, max_connections=int(os.getenv("FD_DEALER_CONNECTIONS", 50))
+                pid=self.engine_pid, max_connections=envs.FD_DEALER_CONNECTIONS
             )
 
             if not self.connection_manager.running:

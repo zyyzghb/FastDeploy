@@ -471,15 +471,15 @@ class HPUModelRunner(ModelRunnerBase):
         # Forward meta store the global meta information of the forward
         self.forward_meta: HPUForwardMeta = None
         self.is_warmuping = False
-        self.is_hpu_perf_breakdown_sync_mode = int(os.environ.get("HPU_PERF_BREAKDOWN_SYNC_MODE", 1)) == 1
+        self.is_hpu_perf_breakdown_sync_mode = envs.HPU_PERF_BREAKDOWN_SYNC_MODE == 1
         # Postprocess Env params
         os.environ["INFERENCE_MSG_QUEUE_ID"] = str(
             self.local_rank + int(self.parallel_config.local_engine_worker_queue_port)
         )
 
-        if int(os.environ.get("HABANA_PROFILE", 0)) == 1:
-            step_start = int(os.environ.get("PROFILE_START", 0))
-            step_end = int(os.environ.get("PROFILE_END", 4))
+        if envs.HABANA_PROFILE == 1:
+            step_start = envs.PROFILE_START
+            step_end = envs.PROFILE_END
             import paddle.profiler as profiler
 
             self.prof = profiler.Profiler(
@@ -1384,18 +1384,18 @@ class HPUModelRunner(ModelRunnerBase):
         self.share_inputs["not_need_stop"][0] = True
 
     def warm_up_bucket(self) -> None:
-        max_prefill_batch = int(os.getenv("MAX_PREFILL_NUM", "3"))
-        warmup_max_model_len = min(int(os.environ.get("HPU_WARMUP_MODEL_LEN", 4096)), self.model_config.max_model_len)
+        max_prefill_batch = envs.MAX_PREFILL_NUM
+        warmup_max_model_len = min(envs.HPU_WARMUP_MODEL_LEN, self.model_config.max_model_len)
         prefill_batchs = []
-        prefill_batch_step = int(os.environ.get("BATCH_STEP_PREFILL", 1))
-        prefill_seq_step = int(os.environ.get("SEQUENCE_STEP_PREFILL", 128))
+        prefill_batch_step = envs.BATCH_STEP_PREFILL
+        prefill_seq_step = envs.SEQUENCE_STEP_PREFILL
         current_prefill_batch = prefill_batch_step
         while current_prefill_batch <= max_prefill_batch:
             prefill_batchs.append(int(current_prefill_batch))
             current_prefill_batch += prefill_batch_step
 
         max_prefill_length = self.cache_config.block_size + warmup_max_model_len
-        prefill_context_block_step = int(os.environ.get("CONTEXT_BLOCK_STEP_PREFILL", 1))
+        prefill_context_block_step = envs.CONTEXT_BLOCK_STEP_PREFILL
         prefill_batchs.reverse()
         prefill_length_with_contexts = list(range(self.cache_config.block_size, max_prefill_length, prefill_seq_step))
         prefill_length_with_contexts.reverse()
@@ -1429,14 +1429,14 @@ class HPUModelRunner(ModelRunnerBase):
                         break
 
         decode_batchs = []
-        decode_batch_step = int(os.environ.get("BATCH_STEP_DECODE", 4))
+        decode_batch_step = envs.BATCH_STEP_DECODE
         current_decode_batch = decode_batch_step
         while current_decode_batch <= self.scheduler_config.max_num_seqs:
             decode_batchs.append(int(current_decode_batch))
             current_decode_batch += decode_batch_step
 
         decode_block_nums = []
-        decode_block_num_step = int(os.environ.get("BLOCK_STEP_DECODE", 16))
+        decode_block_num_step = envs.BLOCK_STEP_DECODE
         current_decode_block_num = decode_block_num_step
         pre_max_block_num = (
             warmup_max_model_len + self.cache_config.block_size - 1
@@ -1729,7 +1729,7 @@ class HPUModelRunner(ModelRunnerBase):
             hpu_model_runner_profile_logger.info(f"StepPaddle execution time(ms): {execution_time}, BT={real_bs}")
             self._update_chunked_prefill(model_forward_batch)
 
-        if int(os.environ.get("HABANA_PROFILE", 0)) == 1:
+        if envs.HABANA_PROFILE == 1:
             self.prof.step()
         if self.measurement_mode:
             if not self.share_inputs["not_need_stop"][0]:

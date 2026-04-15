@@ -76,7 +76,7 @@ class WeightOnlyConfig(QuantConfigBase):
         self.algo = algo
         # arch (int): The compute arch for target device. For example, A100 is 80, v100 is 70,
         # if you do not assign arch, we will get arch from your device, default: None.
-        self.weight_only_linear_arch = os.getenv("FLAGS_weight_only_linear_arch")
+        self.weight_only_linear_arch = envs.FLAGS_weight_only_linear_arch
         if self.weight_only_linear_arch is not None:
             self.weight_only_linear_arch = int(self.weight_only_linear_arch)
         self.quant_max_bound = 0

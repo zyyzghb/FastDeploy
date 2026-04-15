@@ -28,6 +28,7 @@ import yaml
 from paddleformers.utils.log import logger
 
 from fastdeploy.config import FDConfig
+from fastdeploy import envs
 from fastdeploy.inter_communicator import KVCacheStatus, ModelWeightsStatus
 
 
@@ -423,8 +424,8 @@ class DynamicWeightManager:
 
     def _get_gpu_id(self) -> int:
         """Get current GPU device ID."""
-        visible_devices = os.getenv("CUDA_VISIBLE_DEVICES", "0").split(",")
-        return int(visible_devices[int(os.getenv("FLAGS_selected_gpus", "0"))])
+        visible_devices = (envs.CUDA_VISIBLE_DEVICES or "0").split(",")
+        return int(visible_devices[int(envs.FLAGS_selected_gpus)])
 
     def _verify_parameters(self, operation: str):
         """Verify parameters are in expected state after operation."""
@@ -452,7 +453,7 @@ class DynamicWeightManager:
         converted = {}
         for name, meta in ipc_meta.items():
             meta[0] = meta[0].encode("latin-1")
-            meta[6] = int(os.getenv("FLAGS_selected_gpus", "0"))
+            meta[6] = int(envs.FLAGS_selected_gpus)
             tensor = paddle.base.core.LoDTensor._new_shared_cuda(tuple(meta))
             converted[name] = paddle.to_tensor(tensor)
         return converted

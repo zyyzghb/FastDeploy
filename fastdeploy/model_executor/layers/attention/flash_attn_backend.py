@@ -273,7 +273,7 @@ class FlashAttentionBackend(AttentionBackend):
         if fd_config.speculative_config.model_type != "main":
             self.rope_3d = False
         # Note(ZKK): here must be consistent with append_attn_backend.py
-        self.max_partition_size: int = int(os.getenv("FLAGS_max_partition_size", 1024))
+        self.max_partition_size: int = envs.FLAGS_max_partition_size
         if FLASH_ATTN_VERSION is None:
             init_flash_attn_version()
 
@@ -342,7 +342,7 @@ class FlashAttentionBackend(AttentionBackend):
                 layer.layer_id + self.start_layer_index,
             )
 
-        if int(os.getenv("USE_TBO", "0")) == 1:
+        if int(envs.USE_TBO) == 1:
             if hasattr(forward_meta, "tbo_microbatch_id"):
                 # here we only let the last microbatch invoke cache kv transfer！
                 if forward_meta.tbo_microbatch_id == 0:

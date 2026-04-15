@@ -21,6 +21,7 @@ import time
 import numpy as np
 import paddle
 
+from fastdeploy import envs
 from fastdeploy.config import FDConfig
 from fastdeploy.inter_communicator import IPCSignal
 from fastdeploy.utils import get_logger, set_random_seed
@@ -87,7 +88,7 @@ class IluvatarWorker(GpuWorker):
             by adjusting the `gpu_memory_utilization` parameter.
         """
         # 1. Record memory state before profile run
-        return int(float(os.getenv("FD_ILUVATAR_KVCACHE_MEM", "3")) * 1024**3)
+        return int(float(envs.FD_ILUVATAR_KVCACHE_MEM) * 1024**3)
 
 
 # TODO (yuzhe.wu): move it int work_process.py after baidu reconstructs the logic of workproc
